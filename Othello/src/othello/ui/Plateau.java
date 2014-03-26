@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Point;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -20,12 +21,12 @@ public class Plateau extends JFrame {
 	public static final int FRAME_HEIGHT = 500;
 	
 	private Case[][] cases;
-	private Jeu jeu; // CHANGEMENT
+	private Jeu jeu;
 	
 	public Plateau(String title, Jeu jeu) {
        super(title);
        this.setLayout(new SpringLayout());
-       this.jeu = jeu;// CHANGEMENT
+       this.jeu = jeu;
 	   initialiserCases();
 	   JPanel panel = new JPanel();
 	   panel.setPreferredSize(new Dimension(FRAME_WIDTH/3,FRAME_HEIGHT));
@@ -76,7 +77,7 @@ public class Plateau extends JFrame {
 	   cases = new Case[PLATEAU_HEIGHT][PLATEAU_WIDTH];
 	   for (int i=0;i<cases.length;i++) {
 	      for (int j=0;j<cases[i].length;j++) {
-	         cases[i][j] = new Case(this, this.jeu); // CHANGEMENT
+	         cases[i][j] = new Case(this, this.jeu,i,j);
 	      }
 	   }
 	}
@@ -90,6 +91,30 @@ public class Plateau extends JFrame {
 	      for (int j=0;j<Plateau.PLATEAU_WIDTH;j++) {
 	         cases[i][j].setJouable(false);    
 	      }
+	   }
+	}
+	
+	/**
+	 * Retourne tous les pions qui sont gagnés par le joueur lorsqu'il a joué son coup
+	 * @param c
+	 */
+	public void returnAllPions(Case c) {
+       for (int i=0;i<c.getDirections().size();i++) {
+          returnOnTheLine(c.getI(),c.getJ(),c.getDirection(i));
+       }
+	}
+	
+	/**
+	 * Fonction récursive qui va retourner tous les pions sur le chemin jusqu'à atteindre un des pions du joueur qui vient
+	 * de jouer
+	 * @param x Ordonnée de la case jouée
+	 * @param y Abcisse de la case jouée
+	 * @param direction Coordonnées de la direction dans laquelle les pions doivent être retournés
+	 */
+	public void returnOnTheLine(int x, int y, Point direction) {
+	   if (cases[x+direction.x][y+direction.y].getCouleur()==Jeu.nonTour) {
+	      cases[x+direction.x][y+direction.y].setCouleur(Jeu.tour);
+		  returnOnTheLine(x+direction.x,y+direction.y,direction);
 	   }
 	}
 	

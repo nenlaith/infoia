@@ -12,14 +12,14 @@ public class Jeu {
 
 	private int nombreTour;
 	private Plateau plateau;
-	private IntelligenceArtificielle IA;
+	private IA IA;
 	
-	public Jeu() { // CHANGEMENT 
+	public Jeu() {
 	   tour = Couleur.NOIR;
 	   nonTour = (tour==Couleur.BLANC) ? Couleur.NOIR : Couleur.BLANC;
 	}
 	
-	public void setPlateau(Plateau plateau) { // PLATEAU
+	public void setPlateau(Plateau plateau) {
 		this.plateau = plateau;
 	}
 	
@@ -43,17 +43,20 @@ public class Jeu {
           for (int j=minJ;j<=maxJ;j++) {
         	 if (posI+i<0 || posI+i>=Plateau.PLATEAU_HEIGHT || posJ+j<0 || posJ+j>Plateau.PLATEAU_WIDTH)
         	    continue;
-        	 if (pionAdverse && plateau.getCases()[posI+i][posJ+j].getCouleur()==null)
+        	 if (pionAdverse && plateau.getCases()[posI+i][posJ+j].getCouleur()==null) {
         		plateau.getCases()[posI+i][posJ+j].setJouable(true);
+        		plateau.getCases()[posI+i][posJ+j].addDirection(new Point(-i,-j));
+        	 }
              if (plateau.getCases()[posI+i][posJ+j].getCouleur()==nonTour)
                 search(posI+i,posJ+j,i,i,j,j,true);
           }
        }
 	}
 	
-	public void jeuIA() { // CHANGEMENT
+	public void jeuIA() {
 		plateau.printSampleCases();
 		Point pion = IA.tour(plateau.getSampleCases(), nombreTour);
 		plateau.getCase(pion.y, pion.x);
 	}
+	
 }

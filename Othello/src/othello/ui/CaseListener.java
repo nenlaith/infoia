@@ -18,8 +18,9 @@ public class CaseListener implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 	   if (c.isJouable()) {
 	      c.setCouleur(Jeu.tour);
+	      c.getPlateau().returnAllPions(c);
+	      c.getPlateau().setAllCasesNonJouable();
 	      Jeu.changeTour();
-	      c.getPlateau().setAllCasesNonJouable(); // CHANGEMENT
 	      jeu.jeuIA();
 	      jeu.setCasesJouables();
 	   }

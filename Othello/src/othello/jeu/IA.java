@@ -3,14 +3,14 @@ package othello.jeu;
 import java.awt.Point;
 import java.util.ArrayList;
 
-public class IntelligenceArtificielle {
+public class IA {
 
 	public static int PETIT = -3000;
 	public static int GRAND = 3000;
 	private int[][] sample;
 
 	private boolean isBorned(int t) {
-		return ((t >= 0 && t < sample.length) ? true : false);
+		return (t >= 0 && t < sample.length);
 	}
 
 	private boolean lookAround(int y, int x, int noc) {
@@ -153,13 +153,5 @@ class State {
 			helper = seconds.get(i);
 			sample[helper.y][helper.x] *= -1;
 		}
-	}
-}
-
-class Evaluation {
-	private int tour;
-	
-	public Evaluation(int tour) {
-		this.tour = tour;
 	}
 }
