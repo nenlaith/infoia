@@ -32,6 +32,7 @@ public class Case extends JButton {
 	   this.setBorderPainted(false);
 	   this.setFocusPainted(false);
 	   this.addActionListener(new CaseListener(this, this.jeu));
+	   this.couleur = Couleur.NONE;
 	   this.jouable = false;
 	   directions = new ArrayList<Point>();
 	}

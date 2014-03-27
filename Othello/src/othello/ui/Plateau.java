@@ -48,8 +48,8 @@ public class Plateau extends JFrame {
 		for (int y = 0; y < PLATEAU_HEIGHT; ++y) {
 			System.out.print('[');
 			for (int x = 0; x < PLATEAU_WIDTH; ++x) {
-				if (sampleCases[y][x] == -1) {System.out.println(sampleCases[y][x]);}
-				else {System.out.println(" " + sampleCases[y][x]);}
+				if (sampleCases[y][x] == -1) {System.out.print(sampleCases[y][x]);}
+				else {System.out.print(" " + sampleCases[y][x]);}
 			}
 			System.out.println(']');
 		}
@@ -60,10 +60,10 @@ public class Plateau extends JFrame {
 		
 		for (int y = 0; y < PLATEAU_HEIGHT; ++y) {
 			for (int x = 0; x < PLATEAU_WIDTH; ++x) {
-				if (cases[y][x].isJouable())
+				if (cases[y][x].getCouleur() == Couleur.NONE)
 					sampleCases[y][x] = 0;
 				else
-					sampleCases[y][x] = (cases[y][x].getCouleur() == Jeu.tour) ? -1 : 1;
+					sampleCases[y][x] = (cases[y][x].getCouleur() == Jeu.tour) ? 1 : -1;
 			}
 		}
 		return (sampleCases);

@@ -43,7 +43,7 @@ public class Jeu {
           for (int j=minJ;j<=maxJ;j++) {
         	 if (posI+i<0 || posI+i>=Plateau.PLATEAU_HEIGHT || posJ+j<0 || posJ+j>Plateau.PLATEAU_WIDTH)
         	    continue;
-        	 if (pionAdverse && plateau.getCases()[posI+i][posJ+j].getCouleur()==null) {
+        	 if (pionAdverse && plateau.getCases()[posI+i][posJ+j].getCouleur()==Couleur.NONE) {
         		plateau.getCases()[posI+i][posJ+j].setJouable(true);
         		plateau.getCases()[posI+i][posJ+j].addDirection(new Point(-i,-j));
         	 }
