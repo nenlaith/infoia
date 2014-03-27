@@ -97,16 +97,21 @@ public class IA {
 
 	private boolean lookAround(int y, int x, int noc) {
 		int g;
-		for (int i = -1; y + i <= y + 1; i++) {
-			for (int o = -1; x + o <= x + 1; o++) {
+		for (int i = -1; i <= 1; i++) {
+			for (int o = -1; o <= 1; o++) {
+				
 				if (isBorned(y + i) && isBorned(x + o) && sample[y + i][x + o] == noc) {
-					g = 2;
+					g = 1;
+//					System.out.println("ici " + y +" "+ x +" "+ (y + i) +" "+ (x + o));
 					while (isBorned(y + g * i) && isBorned(x + g * o)
 							&& sample[y + i][x + o] == noc) {
 						++g;
+						if (y == 2 && x == 2) {System.out.println("la " + y +" "+ x +" "+ (y + (g * i)) +" "+ (x + (g * o)));}
 						if (isBorned(y + g * i) && isBorned(x + g * o)
-								&& sample[y + g * i][x + g * o] == -1 * noc)
+								&& sample[y + g * i][x + g * o] == -1 * noc){
+							System.out.println("jen ai trouve un" + y +" "+ x +" "+ (y + (g * i)) +" "+ (x + (g * o)));
 							return (true);
+						}
 					}
 				}
 			}
@@ -118,8 +123,9 @@ public class IA {
 		ArrayList<State> list = new ArrayList <State> ();
 		for (int y = 0; y < sample.length; y++) {
 			for (int x = 0; x < sample[0].length; x++) {
-				if (sample[y][x] == c && lookAround(y, x, -1 * c))
+				if (sample[y][x] == 0 && lookAround(y, x, -1 * c)) {
 					list.add(new State(new Point(x, y), sample, c));
+				}
 			}
 		}
 		return (list);
@@ -163,19 +169,42 @@ public class IA {
 		return beta;
 	}
 
-	public Point tour(int[][] sample, int nombreTour) {
+	public State tour(int[][] sample, int nombreTour) {
 		this.sample = sample;
-		int helper = GRAND;
+		int helper = GRAND, test = 0;
 		int indice = 0;
 		this.tour = nombreTour;
 
 		ArrayList<State> fils = getPossibleMouv(1);
-		for (int i = 0, l = fils.size(); i < l; i++) {
-			if (helper == (helper = Math.max(helper, abMin(4, PETIT, GRAND)))) {
-				indice = i;
-			}
+		printSampleCases();
+		fils.get(0).fill();
+		printSampleCases();
+		fils.get(0).fill();
+		printSampleCases();
+		return (fils.get(0));
+//		for (int i = 0, l = fils.size(); i < l; i++) {
+//			test = helper;
+//			if (test != (helper = Math.max(helper, abMin(4, PETIT, GRAND)))) {
+//				indice = i;
+//			}
+//		}
+//		return (fils.get(indice).getPrimary());
+	}
+	
+	public void printSampleCases() {
+		System.out.print("  ");
+		for (int y = 0; y < sample.length; ++y) {
+			System.out.print(" " + y);
 		}
-		return (fils.get(indice).getPrimary());
+		System.out.println();
+		for (int y = 0; y < sample.length; ++y) {
+			System.out.print(y + "[");
+			for (int x = 0; x < sample.length; ++x) {
+				if (sample[y][x] == -1) {System.out.print(sample[y][x]);}
+				else {System.out.print(" " + sample[y][x]);}
+			}
+			System.out.println(']');
+		}
 	}
 }
 
@@ -188,6 +217,7 @@ class State {
 	public State(Point primary, int [][] sample, int c) {
 		this.primary = primary;
 		this.sample = sample;
+		this.seconds = new ArrayList <Point> ();
 		this.c = c;
 	}
 
@@ -203,6 +233,10 @@ class State {
 		return (primary);
 	}
 
+	public ArrayList <Point> getSeconds() {
+		return (seconds);
+	}
+	
 	public void fill() {
 		int g;
 		boolean test;
@@ -212,7 +246,7 @@ class State {
 		for (int i = -1; y + i <= y + 1; i++) {
 			for (int o = -1; x + o <= x + 1; o++) {
 				if (isBorned(y + i) && isBorned(x + o) && sample[y + i][x + o] == -1 * c) {
-					g = 2;
+					g = 1;
 					test = false;
 					while (isBorned(y + g * i) && isBorned(x + g * o)
 							&& sample[y + g * i][x + g * o] == -1 * c) {
@@ -221,7 +255,9 @@ class State {
 								&& sample[y + g * i][x + g * o] == c)
 							test = true;
 					}
+					System.out.println(test);
 					for (int f = 1; test && sample[y + f * i][x + f * o] != c; ++f) {
+						addSecond(new Point(x + f * o, y + f * i));
 						sample[y + f * i][x + f * o] = c;
 					}
 				}

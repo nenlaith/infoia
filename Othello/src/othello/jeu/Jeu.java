@@ -10,13 +10,14 @@ public class Jeu {
 	public static Couleur tour;
 	public static Couleur nonTour;
 
-	private int nombreTour;
+	private static int nombreTour;
 	private Plateau plateau;
-	private IA IA;
+	private IA iA;
 	
 	public Jeu() {
 	   tour = Couleur.NOIR;
 	   nonTour = (tour==Couleur.BLANC) ? Couleur.NOIR : Couleur.BLANC;
+	   iA = new IA();
 	}
 	
 	public void setPlateau(Plateau plateau) {
@@ -27,6 +28,7 @@ public class Jeu {
 	   Couleur inter = tour;
 	   tour = nonTour;
 	   nonTour = inter;
+	   nombreTour++;
 	}
 	
 	public void setCasesJouables() {
@@ -55,8 +57,12 @@ public class Jeu {
 	
 	public void jeuIA() {
 		plateau.printSampleCases();
-		Point pion = IA.tour(plateau.getSampleCases(), nombreTour);
-		plateau.getCase(pion.y, pion.x);
+		State pion = iA.tour(plateau.getSampleCases(), nombreTour);
+		System.out.println(pion.getSeconds().size());
+		plateau.getCase(pion.getPrimary().y, pion.getPrimary().x).setCouleur(Couleur.BLANC);
+		for (int i = 0; i < pion.getSeconds().size(); ++i) {
+			plateau.getCase(pion.getSeconds().get(i).y, pion.getSeconds().get(i).x).setCouleur(Couleur.BLANC);
+		}
 	}
 	
 }
