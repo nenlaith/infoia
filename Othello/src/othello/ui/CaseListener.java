@@ -22,6 +22,7 @@ public class CaseListener implements ActionListener {
 	      c.getPlateau().setAllCasesNonJouable();
 	      Jeu.changeTour();
 	      jeu.jeuIA();
+	      Jeu.changeTour();
 	      jeu.setCasesJouables();
 	   }
 	}

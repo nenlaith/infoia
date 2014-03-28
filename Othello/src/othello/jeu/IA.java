@@ -102,14 +102,13 @@ public class IA {
 				
 				if (isBorned(y + i) && isBorned(x + o) && sample[y + i][x + o] == noc) {
 					g = 1;
-//					System.out.println("ici " + y +" "+ x +" "+ (y + i) +" "+ (x + o));
 					while (isBorned(y + g * i) && isBorned(x + g * o)
 							&& sample[y + i][x + o] == noc) {
 						++g;
 						if (y == 2 && x == 2) {System.out.println("la " + y +" "+ x +" "+ (y + (g * i)) +" "+ (x + (g * o)));}
 						if (isBorned(y + g * i) && isBorned(x + g * o)
 								&& sample[y + g * i][x + g * o] == -1 * noc){
-							System.out.println("jen ai trouve un" + y +" "+ x +" "+ (y + (g * i)) +" "+ (x + (g * o)));
+//							System.out.println("jen ai trouve un" + y +" "+ x +" "+ (y + (g * i)) +" "+ (x + (g * o)));
 							return (true);
 						}
 					}
@@ -124,6 +123,7 @@ public class IA {
 		for (int y = 0; y < sample.length; y++) {
 			for (int x = 0; x < sample[0].length; x++) {
 				if (sample[y][x] == 0 && lookAround(y, x, -1 * c)) {
+					System.out.println("jen mets un");
 					list.add(new State(new Point(x, y), sample, c));
 				}
 			}
@@ -176,19 +176,14 @@ public class IA {
 		this.tour = nombreTour;
 
 		ArrayList<State> fils = getPossibleMouv(1);
-		printSampleCases();
-		fils.get(0).fill();
-		printSampleCases();
-		fils.get(0).fill();
-		printSampleCases();
-		return (fils.get(0));
-//		for (int i = 0, l = fils.size(); i < l; i++) {
-//			test = helper;
-//			if (test != (helper = Math.max(helper, abMin(4, PETIT, GRAND)))) {
-//				indice = i;
-//			}
-//		}
-//		return (fils.get(indice).getPrimary());
+		System.out.println("step " + fils.size());
+		for (int i = 0, l = fils.size(); i < l; i++) {
+			test = helper;
+			if (test != (helper = Math.max(helper, abMin(4, PETIT, GRAND)))) {
+				indice = i;
+			}
+		}
+		return (fils.get(indice));
 	}
 	
 	public void printSampleCases() {
@@ -219,6 +214,7 @@ class State {
 		this.sample = sample;
 		this.seconds = new ArrayList <Point> ();
 		this.c = c;
+		put();
 	}
 
 	private boolean isBorned(int t) {
@@ -237,7 +233,7 @@ class State {
 		return (seconds);
 	}
 	
-	public void fill() {
+	public void put() {
 		int g;
 		boolean test;
 		int x = primary.x;
@@ -262,7 +258,16 @@ class State {
 					}
 				}
 			}
-		}
+		}		
+	}
+	
+	public void fill() {
+		Point helper;
+		sample[primary.y][primary.x] = 1;
+		for (int i = 0, length = seconds.size(); i < length; i++) {
+			helper = seconds.get(i);
+			sample[helper.y][helper.x] = 1;
+		}		
 	}
 
 	public void retrieve() {
