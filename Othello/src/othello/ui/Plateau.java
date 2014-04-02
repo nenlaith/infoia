@@ -1,14 +1,18 @@
 package othello.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Point;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SpringLayout;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 
 import othello.jeu.Jeu;
 
@@ -19,20 +23,33 @@ public class Plateau extends JFrame {
 	public static final int PLATEAU_HEIGHT = 8;
 	public static final int FRAME_WIDTH = 600;
 	public static final int FRAME_HEIGHT = 500;
+	public static final JTextField scoreNoirField = new JTextField("2");
+	public static final JTextField scoreBlancField = new JTextField("2");
 	
 	private Case[][] cases;
 	private Jeu jeu;
 	
 	public Plateau(String title, Jeu jeu) {
        super(title);
-       this.setLayout(new SpringLayout());
+       this.setLayout(new BorderLayout());
        this.jeu = jeu;
 	   initialiserCases();
-	   JPanel panel = new JPanel();
+	   JPanel panel = new JPanel(new BorderLayout());
+	   JPanel panelScore = new JPanel(new GridLayout(2,2));
+	   panelScore.setBorder(new EmptyBorder(10,10,10,10));
+	   JLabel scoreNoirLabel = new JLabel("Noir");
+	   JLabel scoreBlancLabel = new JLabel("Blanc");
+	   panelScore.add(scoreNoirLabel);
+	   panelScore.add(scoreNoirField);
+	   panelScore.add(scoreBlancLabel);
+	   panelScore.add(scoreBlancField);
+	   scoreNoirField.setEditable(false);
+	   scoreBlancField.setEditable(false);
+	   panel.add(panelScore,BorderLayout.NORTH);
 	   panel.setPreferredSize(new Dimension(FRAME_WIDTH/3,FRAME_HEIGHT));
 	   Container container = this.getContentPane();
-	   container.add(new PanelPlateau(),SpringLayout.WEST);
-	   container.add(panel,SpringLayout.EAST);
+	   container.add(new PanelPlateau(),BorderLayout.WEST);
+	   container.add(panel,BorderLayout.EAST);
 	   this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	   this.setSize(FRAME_WIDTH,FRAME_HEIGHT);
 	   this.setVisible(true);
@@ -116,6 +133,20 @@ public class Plateau extends JFrame {
 	      cases[x+direction.x][y+direction.y].setCouleur(Jeu.tour);
 		  returnOnTheLine(x+direction.x,y+direction.y,direction);
 	   }
+	}
+	
+	public void updateScores() {
+	   int scoreNoir=0,scoreBlanc=0;
+	   for (int i=0;i<Plateau.PLATEAU_HEIGHT;i++) {
+	      for (int j=0;j<Plateau.PLATEAU_WIDTH;j++) {
+	         if (cases[i][j].getCouleur()==Couleur.NOIR)
+	            scoreNoir++;
+	         else if (cases[i][j].getCouleur()==Couleur.BLANC)
+	        	scoreBlanc++;
+	      }
+	   }
+	   scoreNoirField.setText(""+scoreNoir);
+	   scoreBlancField.setText(""+scoreBlanc);
 	}
 	
 	class PanelPlateau extends JPanel {

@@ -20,10 +20,12 @@ public class CaseListener implements ActionListener {
 	      c.setCouleur(Jeu.tour);
 	      c.getPlateau().returnAllPions(c);
 	      c.getPlateau().setAllCasesNonJouable();
+	      c.getPlateau().updateScores();
 	      Jeu.changeTour();
 	      jeu.jeuIA();
 	      Jeu.changeTour();
 	      jeu.setCasesJouables();
+	      c.getPlateau().updateScores();
 	   }
 	}
 
