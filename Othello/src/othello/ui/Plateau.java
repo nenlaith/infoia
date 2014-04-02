@@ -142,7 +142,7 @@ public class Plateau extends JFrame {
 	         if (cases[i][j].getCouleur()==Couleur.NOIR)
 	            scoreNoir++;
 	         else if (cases[i][j].getCouleur()==Couleur.BLANC)
-	        	scoreBlanc++;
+	            scoreBlanc++;
 	      }
 	   }
 	   scoreNoirField.setText(""+scoreNoir);
