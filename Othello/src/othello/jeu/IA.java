@@ -116,6 +116,11 @@ public class IA {
 		System.out.println("nombre possible de coup " + fils.size());
 		if (fils.size() == 0)
 			return (null);
+		
+		System.out.println("AVANT TRI : "+fils.toString());
+		fils = triCoups(fils);
+		System.out.println("APRES TRI : "+fils.toString());
+		
 		for (int i = 0, l = fils.size(); i < l; i++) {
 			test = helper;
 			printSampleCases();
@@ -147,181 +152,76 @@ public class IA {
 			System.out.println(']');
 		}
 	}
-}
-
-class State {
-	private Point primary;
-	private ArrayList<Point> seconds;
-	private int [][] sample;
-	private int c;
 	
-	public State(Point primary, int [][] sample, int c) {
-		this.primary = primary;
-		this.sample = sample;
-		this.seconds = new ArrayList <Point> ();
-		this.c = c;
-		put();
-	}
-
-	private boolean isBorned(int t) {
-		return ((t >= 0 && t < sample.length) ? true : false);
-	}
-	
-	public void addSecond(Point point) {
-		seconds.add(point);
-	}
-
-	public Point getPrimary() {
-		return (primary);
-	}
-
-	public ArrayList <Point> getSeconds() {
-		return (seconds);
-	}
-	
-	public void put() {
-		int g;
-		boolean test;
-		int x = primary.x;
-		int y = primary.y;
-		for (int i = -1; i <= 1; i++) {
-			for (int o = -1; o <= 1; o++) {
-				if (isBorned(y + i) && isBorned(x + o) && sample[y + i][x + o] == -1 * c) {
-					g = 1;
-					test = false;
-					while (isBorned(y + g * i) && isBorned(x + g * o)
-							&& sample[y + g * i][x + g * o] == -1 * c) {
-						++g;
-						if (isBorned(y + g * i) && isBorned(x + g * o)
-								&& sample[y + g * i][x + g * o] == c)
-							test = true;
-					}
-					for (int f = 1; test && f < g; ++f) {
-						addSecond(new Point(x + f * o, y + f * i));
-					}
-				}
-			}
-		}		
-	}
-	
-	public void fill() {
-		Point helper;
-		sample[primary.y][primary.x] = c;
-		for (int i = 0, length = seconds.size(); i < length; i++) {
-			helper = seconds.get(i);
-			sample[helper.y][helper.x] = c;
-		}		
-	}
-
-	public void retrieve() {
-		Point helper;
-		sample[primary.y][primary.x] = 0;
-		for (int i = 0, length = seconds.size(); i < length; i++) {
-			helper = seconds.get(i);
-			sample[helper.y][helper.x] = -1 * c;
-		}
-	}
-}
-
-
-class Carnet implements Comparable<Carnet> {
-	private int [][] sample;
-	private ArrayList <Carnet> listSons;
-	private Carnet father;
-	private int result;
-
-	public Carnet(int [][] sample) {
-		this.sample = new int [sample.length][sample.length];
-		for (int y = 0; y < sample.length; ++y) { 
-			for (int x = 0; x < sample.length; ++x) {
-				this.sample[y][x] = sample[y][x];
-			}
-		}
-		this.listSons = new ArrayList <Carnet> ();
-		this.result = 0;
-		this.father = null;
-	}
-
-	
-	public Carnet(int [][] sample, Carnet father) {
-		this.sample = new int [sample.length][sample.length];
-		for (int y = 0; y < sample.length; ++y) { 
-			for (int x = 0; x < sample.length; ++x) {
-				this.sample[y][x] = sample[y][x];
-			}
-		}
-		this.listSons = new ArrayList <Carnet> ();
-		this.result = 0;
-		this.father = father;
-	}
-	
-	public Carnet(int [][] sample, int result, Carnet father) {
-		this.sample = new int [sample.length][sample.length];
-		for (int y = 0; y < sample.length; ++y) { 
-			for (int x = 0; x < sample.length; ++x) {
-				this.sample[y][x] = sample[y][x];
-			}
-		}
-		this.listSons = new ArrayList <Carnet> ();
-		this.result = result;
-		System.out.println(father);
-		this.father = father;
-	}
-
-	public int getResult() {
-		return (this.result);
-	}
-	
-	public void addSon(Carnet son) {
-		listSons.add(son);
-	}
-	
-	public void printGenealogy() {
-		if (father != null) {
-			father.printGenealogy();
-			System.out.println("my father");
-		}
-		printSampleCases();
-	}
-	
-	@Override
-	public int compareTo(Carnet o) {
-		if (this.result == o.getResult())
-			return (0);
-		else if (this.result > o.getResult())
-			return (1);
-		return (-1);
-	}
-	
-	public Carnet addResult(int result) {
-		this.result = result;
-		return (this);
-	}
-	
-	public void printSampleCases() {
-		if (result != 0)
-			System.out.println("result =" + result);
-		System.out.print("  ");
-		for (int y = 0; y < sample.length; ++y) {
-			System.out.print("  " + y);
-		}
-		System.out.println();
-		for (int y = 0; y < sample.length; ++y) {
-			System.out.print(y + "[");
-			for (int x = 0; x < sample.length; ++x) {
-				if (sample[y][x] == -1) {System.out.print(" " + sample[y][x]);}
-				else if (sample[y][x] == 0){System.out.print("  " + sample[y][x]);}
-				else {System.out.print("  " +sample[y][x]);}
-			}
-			System.out.println(']');
-		}
-	}
-	
-	public static void printListCarnet(ArrayList<Carnet> list, int number) {
-		Collections.sort(list);
-		Collections.reverse(list);
-		for (int y = 0; y < Math.min(number, list.size()); ++y) {
-			list.get(y).printGenealogy();
-		}
-	}
+	@SuppressWarnings("unchecked")
+	private ArrayList<State> triCoups(ArrayList<State> fils) {
+       int i=0;
+       ArrayList<State> orderedFils = new ArrayList<State>();
+       ArrayList<State> copy = (ArrayList<State>)fils.clone();
+       //Ajout des coins
+       while (i<copy.size()) {
+          if (isCoin(copy.get(i).getPrimary())) {
+             orderedFils.add(copy.get(i));
+             copy.remove(i);
+          }
+          else {
+             i++;
+          }
+       }
+       //Ajout des cases ni coin, ni X, ni C en ajoutant en premier les cases qui offriront
+       //le moins de coups possibles à l'adversaire
+       ArrayList<State> forSearchFaster = new ArrayList<State>();
+       i=0;
+       while (i<copy.size()) {
+          if (!isCorX(copy.get(i).getPrimary())) {
+             forSearchFaster.add(copy.get(i));
+             copy.remove(i);
+          }
+          else { 
+             i++;
+          }
+       }
+       ArrayList<Integer> listNbCoups = new ArrayList<Integer>();
+       for (i=0;i<forSearchFaster.size();i++) {
+          forSearchFaster.get(i).fill();
+          listNbCoups.add(this.getPossibleMouv(-1).size());
+          forSearchFaster.get(i).retrieve();
+       }
+       while(forSearchFaster.size()!=0) {
+    	  int indiceMinNbCoups = getIndiceMinNbCoups(listNbCoups);
+    	  System.out.println("forSearchFaster : "+forSearchFaster.toString());
+    	  System.out.println("listNbCoups : "+listNbCoups.toString());
+    	  System.out.println("indiceMinNbCoups : "+indiceMinNbCoups);
+          orderedFils.add(forSearchFaster.get(indiceMinNbCoups));
+          forSearchFaster.remove(indiceMinNbCoups);
+          listNbCoups.remove(indiceMinNbCoups);
+       }
+       //Ajout des cases C ou X
+       for (i=0;i<copy.size();i++) {
+    	   orderedFils.add(copy.get(i));
+       }
+       return orderedFils;
+    }
+    
+    private boolean isCoin(Point c) {
+       return ((c.x==0 && c.y==0) || (c.x==0 && c.y==7) || (c.x==7 && c.y==0) || (c.x==7 && c.y==7));
+    }
+    
+    private boolean isCorX(Point c) {
+       return ((c.x==0 && c.y==1) || (c.x==1 && c.y==1) || (c.x==1 && c.y==0) ||
+    		   (c.x==0 && c.y==6) || (c.x==1 && c.y==6) || (c.x==1 && c.y==7) ||
+    		   (c.x==6 && c.y==0) || (c.x==6 && c.y==1) || (c.x==7 && c.y==1) ||
+    		   (c.x==6 && c.y==7) || (c.x==6 && c.y==6) || (c.x==7 && c.y==6));
+    }
+    
+    private int getIndiceMinNbCoups(ArrayList<Integer> listNbCoups) {
+       int min=listNbCoups.get(0),indice=0;
+       for (int i=1;i<listNbCoups.size();i++) {
+          if(listNbCoups.get(i)<min) {
+             min = listNbCoups.get(i);
+             indice = i;
+          }
+       }
+       return indice;
+    }
 }
