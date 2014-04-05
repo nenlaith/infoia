@@ -5,97 +5,17 @@ import java.util.ArrayList;
 
 public class IA {
 
-	public static int PETIT = -3000;
-	public static int GRAND = 3000;
+	public static int PETIT = -10000;
+	public static int GRAND = 10000;
 	private int[][] sample;
-	private double [] taux;
 	private int tour;
 
-	class Evaluation {
-		public final int [][] forceTab = {
-			{500, -150, 30, 10, 10, 30, -150, 500},
-			{-150, -250, 0, 0, 0, 0, -250, -150},
-			{30, 0, 1, 2, 2, 1, 0, 30},
-			{10, 0, 2, 16, 15, 2, 0, 10},
-			{10, 0, 2, 16, 15, 2, 0, 10},
-			{30, 0, 1, 2, 2, 1, 0, 30},
-			{-150, -250, 0, 0, 0, 0, -250, -150},
-			{500, -150, 30, 10, 10, 30, -150, 500},
-		};
-		
-		
-		public void changeTab() {
-			for (int y = 0; y < sample.length; y = sample.length - 1) {
-				for (int x = 0; x < sample.length; x = sample.length - 1) {
-					if (sample[y][x] == 1) {
-						for (int i = -1; y + i <= y + 1; i++) {
-							for (int o = -1; x + o <= x + 1; o++) {
-								if (isBorned(y + i) && isBorned(x + o)) {
-									forceTab[x][y] = Math.abs(forceTab[x][y]);
-								}
-							}
-						}				
-					}
-				}
-			}
-		}
-		
-		public Evaluation() {
-			changeTab();
-			if (tour < 20) {
-				taux = new double [] {10., 45., 45.};
-			} else if (tour >= 20 && tour < 50) {
-				taux = new double [] {20., 30., 50.};
-			} else {
-				taux = new double [] {45., 10., 45.};
-			}
-		}
-		
-		public int evaluation() {
-			return ((int)(taux[0] * countEvaluation()
-					+ taux[1] * mobilityEvaluation()
-					+ taux[2] * forceEvaluation()));
-		}
-		
-		public int countEvaluation() {
-			int count = 0;
-			for (int y = 0; y < sample.length; ++y) {
-				for (int x = 0; x < sample.length; ++x) {
-					count = (sample[y][x] == 1) ? 1 : 0;
-				}
-			}
-			return (count);
-		}
-		
-		public int mobilityEvaluation() {
-			int count = 0;
-			for (int y = 0; y < sample.length; ++y) {
-				for (int x = 0; x < sample.length; ++x) {
-					if (sample[y][x] == 1 && lookAround(y, x, -1 * 1))
-						count = (sample[y][x] == 1) ? 1 : 0;
-				}
-			}
-			return (count);
-		}
-		
-		public int forceEvaluation() {
-			int count = 0;
-			for (int y = 0; y < sample.length; ++y) {
-				for (int x = 0; x < sample.length; ++x) {
-					if (sample[y][x] == 1 && lookAround(y, x, -1 * 1)) {
-						count = forceTab[y][x] = forceTab[y][x];
-					}
-				}
-			}
-			return (count);
-		}
-	}
 	
-	private boolean isBorned(int t) {
+	public boolean isBorned(int t) {
 		return (t >= 0 && t < sample.length);
 	}
 
-	private boolean lookAround(int y, int x, int noc) {
+	public boolean lookAround(int y, int x, int noc) {
 		int g;
 		for (int i = -1; i <= 1; i++) {
 			for (int o = -1; o <= 1; o++) {
@@ -105,10 +25,8 @@ public class IA {
 					while (isBorned(y + g * i) && isBorned(x + g * o)
 							&& sample[y + i][x + o] == noc) {
 						++g;
-						if (y == 2 && x == 2) {System.out.println("la " + y +" "+ x +" "+ (y + (g * i)) +" "+ (x + (g * o)));}
 						if (isBorned(y + g * i) && isBorned(x + g * o)
 								&& sample[y + g * i][x + g * o] == -1 * noc){
-//							System.out.println("jen ai trouve un" + y +" "+ x +" "+ (y + (g * i)) +" "+ (x + (g * o)));
 							return (true);
 						}
 					}
@@ -123,7 +41,6 @@ public class IA {
 		for (int y = 0; y < sample.length; y++) {
 			for (int x = 0; x < sample[0].length; x++) {
 				if (sample[y][x] == 0 && lookAround(y, x, -1 * c)) {
-					System.out.println("jen mets un");
 					list.add(new State(new Point(x, y), sample, c));
 				}
 			}
@@ -131,10 +48,10 @@ public class IA {
 		return (list);
 	}
 
-	public int abMax(int profondeur, int alpha, int beta) {
+	public int abMax(int alpha, int beta, int profondeur) {
 		int val;
 		if (profondeur == 0)
-			return (new Evaluation().evaluation());
+			return (new Evaluation(sample, tour, this).evaluation());
 		ArrayList<State> fils = getPossibleMouv(1);
 		for (int i = 0, l = fils.size(); i < l; i++) {
 			fils.get(i).fill();
@@ -150,10 +67,10 @@ public class IA {
 		return alpha;
 	}
 
-	public int abMin(int profondeur, int alpha, int beta) {
+	public int abMin(int alpha, int beta, int profondeur) {
 		int val;
 		if (profondeur == 0)
-			return (new Evaluation().evaluation());
+			return (new Evaluation(sample, tour, null).evaluation());
 		ArrayList<State> fils = getPossibleMouv(1);
 		for (int i = 0, l = fils.size(); i < l; i++) {
 			fils.get(i).fill();
@@ -176,12 +93,19 @@ public class IA {
 		this.tour = nombreTour;
 
 		ArrayList<State> fils = getPossibleMouv(1);
-		System.out.println("step " + fils.size());
+		System.out.println("nombre possible de coup " + fils.size());
+		printSampleCases();
+		if (fils.size() == 0)
+			return (null);
 		for (int i = 0, l = fils.size(); i < l; i++) {
 			test = helper;
+			fils.get(i).fill();
+			printSampleCases();
 			if (test != (helper = Math.max(helper, abMin(4, PETIT, GRAND)))) {
 				indice = i;
 			}
+			fils.get(i).retrieve();
+			printSampleCases();
 		}
 		return (fils.get(indice));
 	}
@@ -238,7 +162,6 @@ class State {
 		boolean test;
 		int x = primary.x;
 		int y = primary.y;
-		sample[y][x] = c;
 		for (int i = -1; y + i <= y + 1; i++) {
 			for (int o = -1; x + o <= x + 1; o++) {
 				if (isBorned(y + i) && isBorned(x + o) && sample[y + i][x + o] == -1 * c) {
@@ -251,10 +174,8 @@ class State {
 								&& sample[y + g * i][x + g * o] == c)
 							test = true;
 					}
-					System.out.println(test);
 					for (int f = 1; test && sample[y + f * i][x + f * o] != c; ++f) {
 						addSecond(new Point(x + f * o, y + f * i));
-						sample[y + f * i][x + f * o] = c;
 					}
 				}
 			}

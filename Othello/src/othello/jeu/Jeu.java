@@ -58,10 +58,12 @@ public class Jeu {
 	public void jeuIA() {
 		plateau.printSampleCases();
 		State pion = iA.tour(plateau.getSampleCases(), nombreTour);
-		System.out.println(pion.getSeconds().size());
-		plateau.getCase(pion.getPrimary().y, pion.getPrimary().x).setCouleur(Couleur.BLANC);
-		for (int i = 0; i < pion.getSeconds().size(); ++i) {
-			plateau.getCase(pion.getSeconds().get(i).y, pion.getSeconds().get(i).x).setCouleur(Couleur.BLANC);
+		if (pion != null) {
+			System.out.println(pion.getSeconds().size());
+			plateau.getCase(pion.getPrimary().y, pion.getPrimary().x).setCouleur(Couleur.BLANC);
+			for (int i = 0; i < pion.getSeconds().size(); ++i) {
+				plateau.getCase(pion.getSeconds().get(i).y, pion.getSeconds().get(i).x).setCouleur(Couleur.BLANC);
+			}
 		}
 	}
 	
