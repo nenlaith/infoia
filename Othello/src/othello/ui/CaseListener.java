@@ -3,6 +3,8 @@ package othello.ui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.Timer;
+
 import othello.jeu.Jeu;
 
 public class CaseListener implements ActionListener {
@@ -22,10 +24,16 @@ public class CaseListener implements ActionListener {
 	      c.getPlateau().setAllCasesNonJouable();
 	      c.getPlateau().updateScores();
 	      Jeu.changeTour();
-	      jeu.jeuIA();
-	      Jeu.changeTour();
-	      jeu.setCasesJouables();
-	      c.getPlateau().updateScores();
+	      Timer t = new Timer(1000 * 1, new ActionListener() {
+	    	  public void actionPerformed(ActionEvent e) {
+	    		  jeu.jeuIA();
+	    		  Jeu.changeTour();
+	    		  jeu.setCasesJouables();
+	    		  c.getPlateau().updateScores();
+	    	  }
+	      });
+	      t.setRepeats(false);
+	      t.start();
 	   }
 	}
 

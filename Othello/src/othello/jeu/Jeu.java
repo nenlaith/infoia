@@ -56,7 +56,6 @@ public class Jeu {
 	}
 	
 	public void jeuIA() {
-		plateau.printSampleCases();
 		State pion = iA.tour(plateau.getSampleCases(), nombreTour);
 		if (pion != null) {
 			System.out.println(pion.getSeconds().size());
