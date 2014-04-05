@@ -55,7 +55,7 @@ public class IA {
 		Carnet firsts;
 		
 		if (profondeur == 0) {
-			result = new Evaluation(sample, tour, this).evaluation();
+			result = 0;//new Evaluation(sample, tour, this).evaluation();
 			listCarnet.add(fatherCarnet.addResult(result));
 			return (result);
 		}
@@ -82,7 +82,7 @@ public class IA {
 		Carnet firsts;
 		
 		if (profondeur == 0) {
-			result = new Evaluation(sample, tour, this).evaluation();
+			result = 0;//new Evaluation(sample, tour, this).evaluation();
 			listCarnet.add(fatherCarnet.addResult(result));
 			return (result);
 		}
@@ -105,7 +105,7 @@ public class IA {
 
 	public State tour(int[][] sample, int nombreTour) {
 		this.sample = sample;
-		int helper = GRAND, test = 0;
+		int helper = PETIT, test = 0;
 		int indice = 0;
 		this.tour = nombreTour;
 		this.listCarnet = new ArrayList <Carnet> ();
@@ -121,11 +121,11 @@ public class IA {
 			printSampleCases();
 			fils.get(i).fill();
 			printSampleCases();
-//			firsts =  new Carnet(sample, first);
-//			first.addSon(firsts);
-//			if (test != (helper = Math.max(helper, abMin(PETIT, GRAND, 4, firsts)))) {
-//				indice = i;
-//			}
+			firsts =  new Carnet(sample, first);
+			first.addSon(firsts);
+			if (test != (helper = Math.max(helper, abMin(PETIT, GRAND, 4, firsts)))) {
+				indice = i;
+			}
 			fils.get(i).retrieve();
 		}
 		Carnet.printListCarnet(this.listCarnet, 1);
@@ -206,10 +206,10 @@ class State {
 	
 	public void fill() {
 		Point helper;
-		sample[primary.y][primary.x] = 1;
+		sample[primary.y][primary.x] = c;
 		for (int i = 0, length = seconds.size(); i < length; i++) {
 			helper = seconds.get(i);
-			sample[helper.y][helper.x] = 1;
+			sample[helper.y][helper.x] = c;
 		}		
 	}
 
@@ -218,7 +218,7 @@ class State {
 		sample[primary.y][primary.x] = 0;
 		for (int i = 0, length = seconds.size(); i < length; i++) {
 			helper = seconds.get(i);
-			sample[helper.y][helper.x] *= -1;
+			sample[helper.y][helper.x] = -1 * c;
 		}
 	}
 }

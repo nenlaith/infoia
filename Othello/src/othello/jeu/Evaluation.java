@@ -2,7 +2,7 @@ package othello.jeu;
 
 
 public class Evaluation {
-	private int [][]sample;
+	private int [][] sample;
 	private int tour;
 	private double [] taux;
 	private IA ia;
@@ -52,7 +52,7 @@ public class Evaluation {
 		int count = 0;
 		for (int y = 0; y < sample.length; ++y) {
 			for (int x = 0; x < sample.length; ++x) {
-				count += (sample[y][x] == 1) ? 1 : 0;
+				count += (sample[y][x] == 1) ? 10 : 0;
 			}
 		}
 		return (count);
