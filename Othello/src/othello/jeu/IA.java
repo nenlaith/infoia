@@ -155,73 +155,73 @@ public class IA {
 	
 	@SuppressWarnings("unchecked")
 	private ArrayList<State> triCoups(ArrayList<State> fils) {
-       int i=0;
-       ArrayList<State> orderedFils = new ArrayList<State>();
-       ArrayList<State> copy = (ArrayList<State>)fils.clone();
-       //Ajout des coins
-       while (i<copy.size()) {
-          if (isCoin(copy.get(i).getPrimary())) {
-             orderedFils.add(copy.get(i));
-             copy.remove(i);
-          }
-          else {
-             i++;
-          }
-       }
-       //Ajout des cases ni coin, ni X, ni C en ajoutant en premier les cases qui offriront
-       //le moins de coups possibles à l'adversaire
-       ArrayList<State> forSearchFaster = new ArrayList<State>();
-       i=0;
-       while (i<copy.size()) {
-          if (!isCorX(copy.get(i).getPrimary())) {
-             forSearchFaster.add(copy.get(i));
-             copy.remove(i);
-          }
-          else { 
-             i++;
-          }
-       }
-       ArrayList<Integer> listNbCoups = new ArrayList<Integer>();
-       for (i=0;i<forSearchFaster.size();i++) {
-          forSearchFaster.get(i).fill();
-          listNbCoups.add(this.getPossibleMouv(-1).size());
-          forSearchFaster.get(i).retrieve();
-       }
-       while(forSearchFaster.size()!=0) {
-    	  int indiceMinNbCoups = getIndiceMinNbCoups(listNbCoups);
-    	  System.out.println("forSearchFaster : "+forSearchFaster.toString());
-    	  System.out.println("listNbCoups : "+listNbCoups.toString());
-    	  System.out.println("indiceMinNbCoups : "+indiceMinNbCoups);
-          orderedFils.add(forSearchFaster.get(indiceMinNbCoups));
-          forSearchFaster.remove(indiceMinNbCoups);
-          listNbCoups.remove(indiceMinNbCoups);
-       }
-       //Ajout des cases C ou X
-       for (i=0;i<copy.size();i++) {
-    	   orderedFils.add(copy.get(i));
-       }
-       return orderedFils;
-    }
+           int i=0;
+           ArrayList<State> orderedFils = new ArrayList<State>();
+           ArrayList<State> copy = (ArrayList<State>)fils.clone();
+           //Ajout des coins
+           while (i<copy.size()) {
+              if (isCoin(copy.get(i).getPrimary())) {
+                 orderedFils.add(copy.get(i));
+                 copy.remove(i);
+              }
+              else {
+                 i++;
+              }
+           }
+           //Ajout des cases ni coin, ni X, ni C en ajoutant en premier les cases qui offriront
+           //le moins de coups possibles à l'adversaire
+           ArrayList<State> forSearchFaster = new ArrayList<State>();
+           i=0;
+           while (i<copy.size()) {
+              if (!isCorX(copy.get(i).getPrimary())) {
+                 forSearchFaster.add(copy.get(i));
+                 copy.remove(i);
+              }
+              else { 
+                 i++;
+              }
+           }
+           ArrayList<Integer> listNbCoups = new ArrayList<Integer>();
+           for (i=0;i<forSearchFaster.size();i++) {
+              forSearchFaster.get(i).fill();
+              listNbCoups.add(this.getPossibleMouv(-1).size());
+              forSearchFaster.get(i).retrieve();
+           }
+           while(forSearchFaster.size()!=0) {
+    	      int indiceMinNbCoups = getIndiceMinNbCoups(listNbCoups);
+    	      System.out.println("forSearchFaster : "+forSearchFaster.toString());
+    	      System.out.println("listNbCoups : "+listNbCoups.toString());
+    	      System.out.println("indiceMinNbCoups : "+indiceMinNbCoups);
+              orderedFils.add(forSearchFaster.get(indiceMinNbCoups));
+              forSearchFaster.remove(indiceMinNbCoups);
+              listNbCoups.remove(indiceMinNbCoups);
+           }
+           //Ajout des cases C ou X
+           for (i=0;i<copy.size();i++) {
+    	      orderedFils.add(copy.get(i));
+           }
+           return orderedFils;
+        }
     
-    private boolean isCoin(Point c) {
-       return ((c.x==0 && c.y==0) || (c.x==0 && c.y==7) || (c.x==7 && c.y==0) || (c.x==7 && c.y==7));
-    }
+        private boolean isCoin(Point c) {
+           return ((c.x==0 && c.y==0) || (c.x==0 && c.y==7) || (c.x==7 && c.y==0) || (c.x==7 && c.y==7));
+        }
     
-    private boolean isCorX(Point c) {
-       return ((c.x==0 && c.y==1) || (c.x==1 && c.y==1) || (c.x==1 && c.y==0) ||
+        private boolean isCorX(Point c) {
+           return ((c.x==0 && c.y==1) || (c.x==1 && c.y==1) || (c.x==1 && c.y==0) ||
     		   (c.x==0 && c.y==6) || (c.x==1 && c.y==6) || (c.x==1 && c.y==7) ||
     		   (c.x==6 && c.y==0) || (c.x==6 && c.y==1) || (c.x==7 && c.y==1) ||
     		   (c.x==6 && c.y==7) || (c.x==6 && c.y==6) || (c.x==7 && c.y==6));
-    }
+        }
     
-    private int getIndiceMinNbCoups(ArrayList<Integer> listNbCoups) {
-       int min=listNbCoups.get(0),indice=0;
-       for (int i=1;i<listNbCoups.size();i++) {
-          if(listNbCoups.get(i)<min) {
-             min = listNbCoups.get(i);
-             indice = i;
-          }
-       }
-       return indice;
-    }
+        private int getIndiceMinNbCoups(ArrayList<Integer> listNbCoups) {
+           int min=listNbCoups.get(0),indice=0;
+           for (int i=1;i<listNbCoups.size();i++) {
+              if(listNbCoups.get(i)<min) {
+                 min = listNbCoups.get(i);
+                 indice = i;
+              }
+           }
+           return indice;
+        }
 }
