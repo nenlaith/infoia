@@ -52,7 +52,7 @@ public class Evaluation {
 		int count = 0;
 		for (int y = 0; y < sample.length; ++y) {
 			for (int x = 0; x < sample.length; ++x) {
-				count += (sample[y][x] == 1) ? 10 : 0;
+				count += (sample[y][x] == 1) ? 15 : 0;
 			}
 		}
 		return (count);
@@ -63,7 +63,7 @@ public class Evaluation {
 		for (int y = 0; y < sample.length; ++y) {
 			for (int x = 0; x < sample.length; ++x) {
 				if (sample[y][x] == 1 && ia.lookAround(y, x, -1 * 1))
-					count += (sample[y][x] == 1) ? 10 : 0;
+					count += (sample[y][x] == 1) ? 20 : 0;
 			}
 		}
 		return (count);

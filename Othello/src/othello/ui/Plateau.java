@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Point;
 
@@ -35,7 +34,7 @@ public class Plateau extends JFrame {
        this.jeu = jeu;
 	   initialiserCases();
 	   JPanel panel = new JPanel(new BorderLayout());
-	   JPanel panelScore = new JPanel(new GridLayout(2,2));
+	   JPanel panelScore = new JPanel(new GridLayout(2,2));	   
 	   panelScore.setBorder(new EmptyBorder(10,10,10,10));
 	   JLabel scoreNoirLabel = new JLabel("Noir");
 	   JLabel scoreBlancLabel = new JLabel("Blanc");
@@ -46,11 +45,24 @@ public class Plateau extends JFrame {
 	   scoreNoirField.setEditable(false);
 	   scoreBlancField.setEditable(false);
 	   panel.add(panelScore,BorderLayout.NORTH);
-	   panel.setPreferredSize(new Dimension(FRAME_WIDTH/3,FRAME_HEIGHT));
+	   panel.setPreferredSize(new Dimension(FRAME_WIDTH/3,FRAME_HEIGHT/3));
+	   
+	   /* A CHANGER */
+	   DiffDialog debug = new DiffDialog();
+	   debug.changeTab(getSampleCases(), getSampleCases());
+	   debug.changeTextPane();
+	   JPanel panelGlob = new JPanel(new BorderLayout());
+	   panelGlob.add(panel, BorderLayout.NORTH);
+	   panelGlob.add(debug, BorderLayout.SOUTH);
+	   jeu.addDebug(debug);
+	   /* A CHANGER */
+	   
 	   Container container = this.getContentPane();
 	   container.add(new PanelPlateau(),BorderLayout.WEST);
-	   container.add(panel,BorderLayout.EAST);
-	   this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//	   container.add(panel,BorderLayout.EAST);
+	   container.add(panelGlob,BorderLayout.EAST); // A CHANGER
+//   this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+	   this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // A CHANGER
 	   this.setSize(FRAME_WIDTH,FRAME_HEIGHT);
 	   this.setVisible(true);
 	   cases[3][3].setCouleur(Couleur.BLANC);

@@ -2,7 +2,8 @@ package othello.jeu;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Collections;
+
+import othello.ui.DiffDialog;
 
 public class IA {
 
@@ -10,8 +11,8 @@ public class IA {
 	public static int GRAND = 10000;
 	private int[][] sample;
 	private int tour;
-	private ArrayList <Carnet> listCarnet;
-	
+	private ArrayList<Carnet> listCarnet;
+
 	public boolean isBorned(int t) {
 		return (t >= 0 && t < sample.length);
 	}
@@ -20,14 +21,15 @@ public class IA {
 		int g;
 		for (int i = -1; i <= 1; i++) {
 			for (int o = -1; o <= 1; o++) {
-				
-				if (isBorned(y + i) && isBorned(x + o) && sample[y + i][x + o] == noc) {
+
+				if (isBorned(y + i) && isBorned(x + o)
+						&& sample[y + i][x + o] == noc) {
 					g = 1;
 					while (isBorned(y + g * i) && isBorned(x + g * o)
-							&& sample[y + i][x + o] == noc) {
+							&& sample[y + g * i][x + g * o] == noc) {
 						++g;
 						if (isBorned(y + g * i) && isBorned(x + g * o)
-								&& sample[y + g * i][x + g * o] == -1 * noc){
+								&& sample[y + g * i][x + g * o] == -1 * noc) {
 							return (true);
 						}
 					}
@@ -38,7 +40,7 @@ public class IA {
 	}
 
 	private ArrayList<State> getPossibleMouv(int c) {
-		ArrayList<State> list = new ArrayList <State> ();
+		ArrayList<State> list = new ArrayList<State>();
 		for (int y = 0; y < sample.length; y++) {
 			for (int x = 0; x < sample[0].length; x++) {
 				if (sample[y][x] == 0 && lookAround(y, x, -1 * c)) {
@@ -53,9 +55,9 @@ public class IA {
 		int val;
 		int result;
 		Carnet firsts;
-		
+
 		if (profondeur == 0) {
-			result = 0;//new Evaluation(sample, tour, this).evaluation();
+			result = new Evaluation(sample, tour, this).evaluation();
 			listCarnet.add(fatherCarnet.addResult(result));
 			return (result);
 		}
@@ -80,9 +82,9 @@ public class IA {
 		int val;
 		int result;
 		Carnet firsts;
-		
+
 		if (profondeur == 0) {
-			result = 0;//new Evaluation(sample, tour, this).evaluation();
+			result = new Evaluation(sample, tour, this).evaluation();
 			listCarnet.add(fatherCarnet.addResult(result));
 			return (result);
 		}
@@ -90,7 +92,7 @@ public class IA {
 		for (int i = 0, l = fils.size(); i < l; i++) {
 			fils.get(i).fill();
 			this.tour++;
-			firsts = new Carnet(sample, fatherCarnet);			
+			firsts = new Carnet(sample, fatherCarnet);
 			fatherCarnet.addSon(firsts);
 			val = abMax(alpha, beta, profondeur - 1, firsts);
 			this.tour--;
@@ -103,38 +105,55 @@ public class IA {
 		return beta;
 	}
 
-	public State tour(int[][] sample, int nombreTour) {
+	public State tour(int[][] sample, int nombreTour, DiffDialog debug) { // A CHANGER
 		this.sample = sample;
 		int helper = PETIT, test = 0;
 		int indice = 0;
 		this.tour = nombreTour;
-		this.listCarnet = new ArrayList <Carnet> ();
+		this.listCarnet = new ArrayList<Carnet>();
 		Carnet first = new Carnet(sample);
 		Carnet firsts;
+		int [][] neSample = cloneSample(); // A CHANGER
 		
 		ArrayList<State> fils = getPossibleMouv(1);
 		System.out.println("nombre possible de coup " + fils.size());
 		if (fils.size() == 0)
 			return (null);
-		
-		System.out.println("AVANT TRI : "+fils.toString());
+
+		System.out.println("AVANT TRI : " + fils.toString());
 		fils = triCoups(fils);
-		System.out.println("APRES TRI : "+fils.toString());
-		
+		System.out.println("APRES TRI : " + fils.toString());
+
 		for (int i = 0, l = fils.size(); i < l; i++) {
 			test = helper;
-			printSampleCases();
+			printSampleCases(); // A CHANGER
 			fils.get(i).fill();
-			printSampleCases();
-			firsts =  new Carnet(sample, first);
+			printSampleCases(); // A CHANGER
+			firsts = new Carnet(sample, first);
 			first.addSon(firsts);
-			if (test != (helper = Math.max(helper, abMin(PETIT, GRAND, 4, firsts)))) {
+			if (test != (helper = Math.max(helper,
+					abMin(PETIT, GRAND, 4, firsts)))) {
 				indice = i;
 			}
 			fils.get(i).retrieve();
 		}
-		Carnet.printListCarnet(this.listCarnet, 1);
+		Carnet.printListCarnet(this.listCarnet, 1); // A CHANGER
+		fils.get(indice).fill();
+		debug.changeTab(neSample, cloneSample()); // A CHANGER
+		debug.changeTextPane(); // A CHANGER
 		return (fils.get(indice));
+	}
+
+	public int [][] cloneSample() {
+		int [][] ne = new int [sample.length][sample.length];
+		
+		for (int y = 0; y < sample.length; ++y) {
+			for (int x = 0; x < sample.length; ++x) {
+				ne[y][x] = sample[y][x];
+			}
+		}
+		
+		return (ne);
 	}
 	
 	public void printSampleCases() {
@@ -146,82 +165,88 @@ public class IA {
 		for (int y = 0; y < sample.length; ++y) {
 			System.out.print(y + "[");
 			for (int x = 0; x < sample.length; ++x) {
-				if (sample[y][x] == -1) {System.out.print(sample[y][x]);}
-				else {System.out.print(" " + sample[y][x]);}
+				if (sample[y][x] == -1) {
+					System.out.print(sample[y][x]);
+				} else {
+					System.out.print(" " + sample[y][x]);
+				}
 			}
 			System.out.println(']');
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private ArrayList<State> triCoups(ArrayList<State> fils) {
-           int i=0;
-           ArrayList<State> orderedFils = new ArrayList<State>();
-           ArrayList<State> copy = (ArrayList<State>)fils.clone();
-           //Ajout des coins
-           while (i<copy.size()) {
-              if (isCoin(copy.get(i).getPrimary())) {
-                 orderedFils.add(copy.get(i));
-                 copy.remove(i);
-              }
-              else {
-                 i++;
-              }
-           }
-           //Ajout des cases ni coin, ni X, ni C en ajoutant en premier les cases qui offriront
-           //le moins de coups possibles à l'adversaire
-           ArrayList<State> forSearchFaster = new ArrayList<State>();
-           i=0;
-           while (i<copy.size()) {
-              if (!isCorX(copy.get(i).getPrimary())) {
-                 forSearchFaster.add(copy.get(i));
-                 copy.remove(i);
-              }
-              else { 
-                 i++;
-              }
-           }
-           ArrayList<Integer> listNbCoups = new ArrayList<Integer>();
-           for (i=0;i<forSearchFaster.size();i++) {
-              forSearchFaster.get(i).fill();
-              listNbCoups.add(this.getPossibleMouv(-1).size());
-              forSearchFaster.get(i).retrieve();
-           }
-           while(forSearchFaster.size()!=0) {
-    	      int indiceMinNbCoups = getIndiceMinNbCoups(listNbCoups);
-    	      System.out.println("forSearchFaster : "+forSearchFaster.toString());
-    	      System.out.println("listNbCoups : "+listNbCoups.toString());
-    	      System.out.println("indiceMinNbCoups : "+indiceMinNbCoups);
-              orderedFils.add(forSearchFaster.get(indiceMinNbCoups));
-              forSearchFaster.remove(indiceMinNbCoups);
-              listNbCoups.remove(indiceMinNbCoups);
-           }
-           //Ajout des cases C ou X
-           for (i=0;i<copy.size();i++) {
-    	      orderedFils.add(copy.get(i));
-           }
-           return orderedFils;
-        }
-    
-        private boolean isCoin(Point c) {
-           return ((c.x==0 && c.y==0) || (c.x==0 && c.y==7) || (c.x==7 && c.y==0) || (c.x==7 && c.y==7));
-        }
-    
-        private boolean isCorX(Point c) {
-           return ((c.x==0 && c.y==1) || (c.x==1 && c.y==1) || (c.x==1 && c.y==0) ||
-    		   (c.x==0 && c.y==6) || (c.x==1 && c.y==6) || (c.x==1 && c.y==7) ||
-    		   (c.x==6 && c.y==0) || (c.x==6 && c.y==1) || (c.x==7 && c.y==1) ||
-    		   (c.x==6 && c.y==7) || (c.x==6 && c.y==6) || (c.x==7 && c.y==6));
-        }
-    
-        private int getIndiceMinNbCoups(ArrayList<Integer> listNbCoups) {
-           int min=listNbCoups.get(0),indice=0;
-           for (int i=1;i<listNbCoups.size();i++) {
-              if(listNbCoups.get(i)<min) {
-                 min = listNbCoups.get(i);
-                 indice = i;
-              }
-           }
-           return indice;
-        }
+		int i = 0;
+		ArrayList<State> orderedFils = new ArrayList<State>();
+		ArrayList<State> copy = (ArrayList<State>) fils.clone();
+		// Ajout des coins
+		while (i < copy.size()) {
+			if (isCoin(copy.get(i).getPrimary())) {
+				orderedFils.add(copy.get(i));
+				copy.remove(i);
+			} else {
+				i++;
+			}
+		}
+		// Ajout des cases ni coin, ni X, ni C en ajoutant en premier les cases
+		// qui offriront
+		// le moins de coups possibles à l'adversaire
+		ArrayList<State> forSearchFaster = new ArrayList<State>();
+		i = 0;
+		while (i < copy.size()) {
+			if (!isCorX(copy.get(i).getPrimary())) {
+				forSearchFaster.add(copy.get(i));
+				copy.remove(i);
+			} else {
+				i++;
+			}
+		}
+		ArrayList<Integer> listNbCoups = new ArrayList<Integer>();
+		for (i = 0; i < forSearchFaster.size(); i++) {
+			forSearchFaster.get(i).fill();
+			listNbCoups.add(this.getPossibleMouv(-1).size());
+			forSearchFaster.get(i).retrieve();
+		}
+		while (forSearchFaster.size() != 0) {
+			int indiceMinNbCoups = getIndiceMinNbCoups(listNbCoups);
+			System.out.println("forSearchFaster : "
+					+ forSearchFaster.toString());
+			System.out.println("listNbCoups : " + listNbCoups.toString());
+			System.out.println("indiceMinNbCoups : " + indiceMinNbCoups);
+			orderedFils.add(forSearchFaster.get(indiceMinNbCoups));
+			forSearchFaster.remove(indiceMinNbCoups);
+			listNbCoups.remove(indiceMinNbCoups);
+		}
+		// Ajout des cases C ou X
+		for (i = 0; i < copy.size(); i++) {
+			orderedFils.add(copy.get(i));
+		}
+		return orderedFils;
+	}
+
+	private boolean isCoin(Point c) {
+		return ((c.x == 0 && c.y == 0) || (c.x == 0 && c.y == 7)
+				|| (c.x == 7 && c.y == 0) || (c.x == 7 && c.y == 7));
+	}
+
+	private boolean isCorX(Point c) {
+		return ((c.x == 0 && c.y == 1) || (c.x == 1 && c.y == 1)
+				|| (c.x == 1 && c.y == 0) || (c.x == 0 && c.y == 6)
+				|| (c.x == 1 && c.y == 6) || (c.x == 1 && c.y == 7)
+				|| (c.x == 6 && c.y == 0) || (c.x == 6 && c.y == 1)
+				|| (c.x == 7 && c.y == 1) || (c.x == 6 && c.y == 7)
+				|| (c.x == 6 && c.y == 6) || (c.x == 7 && c.y == 6));
+	}
+
+	private int getIndiceMinNbCoups(ArrayList<Integer> listNbCoups) {
+		int min = listNbCoups.get(0), indice = 0;
+		for (int i = 1; i < listNbCoups.size(); i++) {
+			if (listNbCoups.get(i) < min) {
+				min = listNbCoups.get(i);
+				indice = i;
+			}
+		}
+		return indice;
+	}
 }
