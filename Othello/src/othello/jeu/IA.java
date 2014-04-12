@@ -185,7 +185,7 @@ public class IA {
 		switch(niveau) {
 		   case FACILE : return 3;
 		   case MOYEN : return 7;
-		   case DIFFICILE : return 12;
+		   case DIFFICILE : return 10;
 		   default : return 0;
 		}
 	}

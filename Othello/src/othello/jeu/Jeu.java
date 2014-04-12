@@ -16,6 +16,7 @@ public class Jeu {
 	public Niveau niveau;
 	private Plateau plateau;
 	private IA iA;
+	private Couleur gagnant;
 	private DiffDialog debug; // A CHANGER
 
 	public Jeu(Niveau niveau) {
@@ -31,6 +32,14 @@ public class Jeu {
 	
 	public void setNiveau(Niveau niveau) {
 	   this.niveau = niveau;
+	}
+	
+	public Couleur getGagnant() {
+       return gagnant;
+	}
+	
+	public void setGagnant(Couleur gagnant) {
+	   this.gagnant = gagnant;
 	}
 
 	public static void changeTour() {
@@ -64,7 +73,7 @@ public class Jeu {
 	   }
 	}
 
-	public void jeuIA() {
+	public boolean jeuIA() {
 		State pion = iA.tour(plateau.getSampleCases(), nombreTour, niveau, debug); // A CHANGER
 		if (pion != null) {
 			System.out.println(pion.getSeconds().size());
@@ -72,7 +81,9 @@ public class Jeu {
 			for (int i = 0; i < pion.getSeconds().size(); ++i) {
 				plateau.getCase(pion.getSeconds().get(i).y, pion.getSeconds().get(i).x).setCouleur(Couleur.BLANC);
 			}
+			return true;
 		}
+		return false;
 	}
 
 	public void addDebug(DiffDialog dialog) {

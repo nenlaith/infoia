@@ -33,6 +33,8 @@ public class Plateau extends JFrame {
 	private JPanel panel;
 	private Case[][] cases;
 	private Jeu jeu;
+	private int scoreNoir;
+	private int scoreBlanc;
 	
 	public Plateau(String title) {
        super(title);
@@ -157,6 +159,11 @@ public class Plateau extends JFrame {
        for (int i=0;i<c.getDirections().size();i++) {
           returnOnTheLine(c.getI(),c.getJ(),c.getDirection(i));
        }
+       for (int i=0;i<cases.length;i++) {
+ 	      for (int j=0;j<cases[i].length;j++) {
+ 	         cases[i][j].getDirections().clear();
+ 	      }
+ 	   }
 	}
 	
 	/**
@@ -167,14 +174,16 @@ public class Plateau extends JFrame {
 	 * @param direction Coordonnées de la direction dans laquelle les pions doivent être retournés
 	 */
 	public void returnOnTheLine(int x, int y, Point direction) {
-	   if (cases[x+direction.x][y+direction.y].getCouleur()==Jeu.nonTour) {
+	   if (cases[x+direction.x][y+direction.y].getCouleur()==Jeu.nonTour 
+	          && x+direction.x>=0 && x+direction.x<Plateau.PLATEAU_HEIGHT && y+direction.y>=0 && y+direction.y<Plateau.PLATEAU_WIDTH) {
 	      cases[x+direction.x][y+direction.y].setCouleur(Jeu.tour);
 		  returnOnTheLine(x+direction.x,y+direction.y,direction);
 	   }
 	}
 	
 	public void updateScores() {
-	   int scoreNoir=0,scoreBlanc=0;
+	   scoreNoir=0;
+	   scoreBlanc=0;
 	   for (int i=0;i<Plateau.PLATEAU_HEIGHT;i++) {
 	      for (int j=0;j<Plateau.PLATEAU_WIDTH;j++) {
 	         if (cases[i][j].getCouleur()==Couleur.NOIR)
@@ -185,6 +194,50 @@ public class Plateau extends JFrame {
 	   }
 	   scoreNoirField.setText(""+scoreNoir);
 	   scoreBlancField.setText(""+scoreBlanc);
+	   if (scoreNoir+scoreBlanc==64) {
+	      if (scoreNoir>scoreBlanc)
+	         jeu.setGagnant(Couleur.NOIR);
+	      else if (scoreNoir<scoreBlanc)
+	    	 jeu.setGagnant(Couleur.BLANC);
+	      else
+	    	 jeu.setGagnant(Couleur.NONE);
+	   }
+	}
+	
+	public void endGame(boolean plateauRempli) {
+	   JLabel gagnantLabel = new JLabel("");
+	   String text = null;
+	   Couleur gagnant = jeu.getGagnant();
+	   System.out.println("gagnant : "+gagnant.toString());
+	   if (!plateauRempli) {
+		  int pointsRestants=0;
+	      for (int i=0;i<Plateau.PLATEAU_HEIGHT;i++) {
+		     for (int j=0;j<Plateau.PLATEAU_WIDTH;j++) {
+			    if (cases[i][j].getCouleur()==Couleur.NONE)
+			       pointsRestants++;
+			 }
+	      }
+	      if (scoreNoir>scoreBlanc) {
+		     scoreNoir+=pointsRestants;
+		     scoreNoirField.setText(""+scoreNoir);
+		     jeu.setGagnant(Couleur.NOIR);
+	      }
+		  else if (scoreNoir<scoreBlanc) {
+			 scoreBlanc+=pointsRestants;
+			 scoreBlancField.setText(""+scoreBlanc);
+			 jeu.setGagnant(Couleur.BLANC);
+		  }
+		  else {
+	         jeu.setGagnant(Couleur.NONE);
+		  }
+	   }
+	   switch(gagnant) {
+	      case NOIR : text = "Les noirs gagnent";break;
+	      case BLANC : text = "Les blancs gagnent";break;
+	      case NONE : text = "Egalité";break;
+	   }
+	   gagnantLabel.setText(text);
+	   panel.add(gagnantLabel,BorderLayout.CENTER);
 	}
 	
 	class PanelPlateau extends JPanel {

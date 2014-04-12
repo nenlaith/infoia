@@ -23,20 +23,34 @@ public class CaseListener implements ActionListener {
 	      c.getPlateau().returnAllPions(c);
 	      c.getPlateau().setAllCasesNonJouable();
 	      c.getPlateau().updateScores();
-	      Jeu.changeTour();
-	      tourIA();
+	      if (jeu.getGagnant()!=null) {
+	         c.getPlateau().endGame(true);
+	      }
+	      else {
+	         Jeu.changeTour();
+	         tourIA();
+	      }
 	   }
 	}
 	
 	private void tourIA() {
 	   Timer t = new Timer(1000 * 1, new ActionListener() {
 	      public void actionPerformed(ActionEvent e) {
-	         jeu.jeuIA();
+	         boolean iaAJoue = jeu.jeuIA();
 	    	 Jeu.changeTour();
 	         jeu.setCasesJouables();
 	    	 c.getPlateau().updateScores();
-	    	 if (c.getPlateau().getNumberCasesJouables()==0) {
+	    	 if (jeu.getGagnant()!=null) {
+		        c.getPlateau().endGame(true);
+		     }
+	    	 //Plus aucun coup a jouer pour le joueur -> l'IA rejoue
+	    	 else if (c.getPlateau().getNumberCasesJouables()==0) {
+	    		Jeu.changeTour();
 	    	    tourIA();
+	    	 }
+	    	 //Plus aucun coup a jouer pour le joueur et pour l'IA
+	    	 else if (c.getPlateau().getNumberCasesJouables()==0 && !iaAJoue) {
+	    		 c.getPlateau().endGame(false);
 	    	 }
 	      }
 	   });
