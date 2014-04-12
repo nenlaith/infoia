@@ -22,6 +22,7 @@ public class DiffDialog extends JPanel{
 	public DiffDialog() {
 		super(new FlowLayout());
 		textPane = new JTextPane();
+		textPane.setEditable(false);
 		this.add(textPane);
 	}
 

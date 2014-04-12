@@ -13,7 +13,7 @@ public class State {
 	public State(Point primary, int [][] sample, int c) {
 		this.primary = primary;
 		this.sample = sample;
-		this.seconds = new ArrayList <Point> ();
+		this.seconds = new ArrayList<Point>();
 		this.c = c;
 		put();
 	}

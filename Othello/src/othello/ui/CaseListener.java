@@ -24,17 +24,24 @@ public class CaseListener implements ActionListener {
 	      c.getPlateau().setAllCasesNonJouable();
 	      c.getPlateau().updateScores();
 	      Jeu.changeTour();
-	      Timer t = new Timer(1000 * 1, new ActionListener() {
-	    	  public void actionPerformed(ActionEvent e) {
-	    		  jeu.jeuIA();
-	    		  Jeu.changeTour();
-	    		  jeu.setCasesJouables();
-	    		  c.getPlateau().updateScores();
-	    	  }
-	      });
-	      t.setRepeats(false);
-	      t.start();
+	      tourIA();
 	   }
+	}
+	
+	private void tourIA() {
+	   Timer t = new Timer(1000 * 1, new ActionListener() {
+	      public void actionPerformed(ActionEvent e) {
+	         jeu.jeuIA();
+	    	 Jeu.changeTour();
+	         jeu.setCasesJouables();
+	    	 c.getPlateau().updateScores();
+	    	 if (c.getPlateau().getNumberCasesJouables()==0) {
+	    	    tourIA();
+	    	 }
+	      }
+	   });
+	   t.setRepeats(false);
+	   t.start();
 	}
 
 }

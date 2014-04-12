@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 
 import othello.ui.DiffDialog;
+import othello.ui.Niveau;
 
 public class IA {
 
@@ -62,6 +63,9 @@ public class IA {
 			return (result);
 		}
 		ArrayList<State> fils = getPossibleMouv(1);
+		
+		fils = triCoups(fils);//ORDONNANCEMENT DES FILS
+		
 		for (int i = 0, l = fils.size(); i < l; i++) {
 			fils.get(i).fill();
 			this.tour++;
@@ -89,6 +93,9 @@ public class IA {
 			return (result);
 		}
 		ArrayList<State> fils = getPossibleMouv(-1);
+		
+		fils = triCoups(fils);//ORDONNANCEMENT DES FILS
+		
 		for (int i = 0, l = fils.size(); i < l; i++) {
 			fils.get(i).fill();
 			this.tour++;
@@ -105,11 +112,12 @@ public class IA {
 		return beta;
 	}
 
-	public State tour(int[][] sample, int nombreTour, DiffDialog debug) { // A CHANGER
+	public State tour(int[][] sample, int nombreTour, Niveau niveau, DiffDialog debug) { // A CHANGER
 		this.sample = sample;
 		int helper = PETIT, test = 0;
 		int indice = 0;
 		this.tour = nombreTour;
+		int profondeur = getProfondeur(niveau);
 		this.listCarnet = new ArrayList<Carnet>();
 		Carnet first = new Carnet(sample);
 		Carnet firsts;
@@ -120,9 +128,7 @@ public class IA {
 		if (fils.size() == 0)
 			return (null);
 
-		System.out.println("AVANT TRI : " + fils.toString());
-		fils = triCoups(fils);
-		System.out.println("APRES TRI : " + fils.toString());
+		fils = triCoups(fils);//ORDONNANCEMENT DES FILS
 
 		for (int i = 0, l = fils.size(); i < l; i++) {
 			test = helper;
@@ -132,7 +138,7 @@ public class IA {
 			firsts = new Carnet(sample, first);
 			first.addSon(firsts);
 			if (test != (helper = Math.max(helper,
-					abMin(PETIT, GRAND, 4, firsts)))) {
+					abMin(PETIT, GRAND, profondeur, firsts)))) {
 				indice = i;
 			}
 			fils.get(i).retrieve();
@@ -174,6 +180,15 @@ public class IA {
 			System.out.println(']');
 		}
 	}
+	
+	private int getProfondeur(Niveau niveau) {
+		switch(niveau) {
+		   case FACILE : return 3;
+		   case MOYEN : return 7;
+		   case DIFFICILE : return 12;
+		   default : return 0;
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	private ArrayList<State> triCoups(ArrayList<State> fils) {
@@ -210,10 +225,6 @@ public class IA {
 		}
 		while (forSearchFaster.size() != 0) {
 			int indiceMinNbCoups = getIndiceMinNbCoups(listNbCoups);
-			System.out.println("forSearchFaster : "
-					+ forSearchFaster.toString());
-			System.out.println("listNbCoups : " + listNbCoups.toString());
-			System.out.println("indiceMinNbCoups : " + indiceMinNbCoups);
 			orderedFils.add(forSearchFaster.get(indiceMinNbCoups));
 			forSearchFaster.remove(indiceMinNbCoups);
 			listNbCoups.remove(indiceMinNbCoups);
