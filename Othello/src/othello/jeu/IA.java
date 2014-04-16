@@ -3,6 +3,7 @@ package othello.jeu;
 import java.awt.Point;
 import java.util.ArrayList;
 
+import othello.ui.Couleur;
 import othello.ui.DiffDialog;
 import othello.ui.Niveau;
 
@@ -191,7 +192,7 @@ public class IA {
 		switch(niveau) {
 		   case FACILE : return 3;
 		   case MOYEN : return 7;
-		   case DIFFICILE : return 10;
+		   case DIFFICILE : return 12;
 		   default : return 0;
 		}
 	}
@@ -209,6 +210,56 @@ public class IA {
 			} else {
 				i++;
 			}
+		}
+        if (hasACoin(Jeu.tour)) {
+           if (hasTopLeftCoin(Jeu.tour)) {
+              i=0;
+              while (i < copy.size()) {
+      		     if (isCorXAtTopLeft(copy.get(i).getPrimary())) {
+      			    orderedFils.add(copy.get(i));
+      				copy.remove(i);
+      			 } 
+      		     else {
+      			    i++;
+      			 }
+              }
+      	   }
+           if (hasTopRightCoin(Jeu.tour)) {
+              i=0;
+              while (i < copy.size()) {
+       		     if (isCorXAtTopRight(copy.get(i).getPrimary())) {
+       			    orderedFils.add(copy.get(i));
+       				copy.remove(i);
+       			 } 
+       		     else {
+       			    i++;
+       			 }
+              }
+       	   }
+           if (hasBottomLeftCoin(Jeu.tour)) {
+              i=0;
+              while (i < copy.size()) {
+       		     if (isCorXAtBottomLeft(copy.get(i).getPrimary())) {
+       			    orderedFils.add(copy.get(i));
+       				copy.remove(i);
+       			 } 
+       		     else {
+       			    i++;
+       			 }
+              }
+       	   }
+           if (hasBottomRightCoin(Jeu.tour)) {
+              i=0;
+              while (i < copy.size()) {
+       		     if (isCorXAtBottomRight(copy.get(i).getPrimary())) {
+       			    orderedFils.add(copy.get(i));
+       				copy.remove(i);
+       			 } 
+       		     else {
+       			    i++;
+       			 }
+              }
+       	   }
 		}
 		// Ajout des cases ni coin, ni X, ni C en ajoutant en premier les cases
 		// qui offriront
@@ -241,19 +292,50 @@ public class IA {
 		}
 		return orderedFils;
 	}
+	
+	private boolean hasTopLeftCoin(Couleur tour) {
+	   return sample[0][0] == ((tour==Couleur.NOIR) ? -1 : 1);
+	}
+	
+	private boolean hasTopRightCoin(Couleur tour) {
+	   return sample[0][7] == ((tour==Couleur.NOIR) ? -1 : 1);
+	}
+	
+	private boolean hasBottomLeftCoin(Couleur tour) {
+	   return sample[7][0] == ((tour==Couleur.NOIR) ? -1 : 1);
+	}
+	
+	private boolean hasBottomRightCoin(Couleur tour) {
+	   return sample[7][7] == ((tour==Couleur.NOIR) ? -1 : 1);
+    }
+	
+	private boolean hasACoin(Couleur tour) {
+	   return hasTopLeftCoin(tour) || hasTopRightCoin(tour) || hasBottomLeftCoin(tour) || hasBottomRightCoin(tour);
+	}
 
 	private boolean isCoin(Point c) {
 		return ((c.x == 0 && c.y == 0) || (c.x == 0 && c.y == 7)
 				|| (c.x == 7 && c.y == 0) || (c.x == 7 && c.y == 7));
 	}
+	
+	private boolean isCorXAtTopLeft(Point c) {
+       return (c.x == 0 && c.y == 1) || (c.x == 1 && c.y == 1) || (c.x == 1 && c.y == 0);
+	}
+	
+    private boolean isCorXAtTopRight(Point c) {
+       return (c.x == 6 && c.y == 0) || (c.x == 6 && c.y == 1) || (c.x == 7 && c.y == 1);  
+	}
+
+    private boolean isCorXAtBottomLeft(Point c) {
+       return (c.x == 0 && c.y == 6) || (c.x == 1 && c.y == 6) || (c.x == 1 && c.y == 7);	
+    }
+
+    private boolean isCorXAtBottomRight(Point c) {
+	   return (c.x == 6 && c.y == 7) || (c.x == 6 && c.y == 6) || (c.x == 7 && c.y == 6);
+    }
 
 	private boolean isCorX(Point c) {
-		return ((c.x == 0 && c.y == 1) || (c.x == 1 && c.y == 1)
-				|| (c.x == 1 && c.y == 0) || (c.x == 0 && c.y == 6)
-				|| (c.x == 1 && c.y == 6) || (c.x == 1 && c.y == 7)
-				|| (c.x == 6 && c.y == 0) || (c.x == 6 && c.y == 1)
-				|| (c.x == 7 && c.y == 1) || (c.x == 6 && c.y == 7)
-				|| (c.x == 6 && c.y == 6) || (c.x == 7 && c.y == 6));
+		return isCorXAtTopLeft(c) || isCorXAtTopRight(c) || isCorXAtBottomLeft(c) || isCorXAtBottomRight(c); 
 	}
 
 	private int getIndiceMinNbCoups(ArrayList<Integer> listNbCoups) {
