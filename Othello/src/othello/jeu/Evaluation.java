@@ -51,7 +51,7 @@ public class Evaluation {
 	public int evaluation() {
 		return ((int)(taux[0] * countEvaluation()
 				+ taux[1] * mobilityEvaluation()
-				+ taux[2] * forceEvaluation()));
+				+ taux[2] * forceEvaluation()) / 100);
 	}
 	
 	public int countEvaluation() {
