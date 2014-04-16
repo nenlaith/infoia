@@ -13,7 +13,13 @@ public class IA {
 	private int[][] sample;
 	private int tour;
 	private ArrayList<Carnet> listCarnet;
+	private Niveau niveau;
 
+	public IA(Niveau niveau) {
+		this.niveau = niveau;
+		Evaluation.changeLevel(niveau);
+	}
+	
 	public boolean isBorned(int t) {
 		return (t >= 0 && t < sample.length);
 	}
@@ -112,7 +118,7 @@ public class IA {
 		return beta;
 	}
 
-	public State tour(int[][] sample, int nombreTour, Niveau niveau, DiffDialog debug) { // A CHANGER
+	public State tour(int[][] sample, int nombreTour, DiffDialog debug) { // A CHANGER
 		this.sample = sample;
 		int helper = PETIT, test = 0;
 		int indice = 0;

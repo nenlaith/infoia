@@ -1,11 +1,13 @@
 package othello.jeu;
 
+import othello.ui.Niveau;
 
 public class Evaluation {
 	private int [][] sample;
 	private int tour;
 	private double [] taux;
 	private IA ia;
+	private static double [][] LEVEL;
 	
 	public static final int CORNER = 250;
 	public static final int STRAIGHT = 70;
@@ -21,6 +23,10 @@ public class Evaluation {
 		{    0,    0,   30,   10,   10,   30,    0,    0},
 	};
 
+	public static void changeLevel(Niveau niveau) {
+		LEVEL = (niveau == Niveau.FACILE) ? Ponderation.FACILE
+				: ((niveau == Niveau.MOYEN) ? Ponderation.MOYEN : Ponderation.DIFFICILE);
+	}
 	
 	/*
 	 * 3 cas possible :
@@ -34,11 +40,11 @@ public class Evaluation {
 		this.tour = tour;
 		this.ia = ia;
 		if (this.tour < 20) {
-			taux = new double [] {10., 45., 45.};
+			taux = LEVEL[0];
 		} else if (this.tour >= 20 && this.tour < 50) {
-			taux = new double [] {20., 30., 50.};
+			taux = LEVEL[1];
 		} else {
-			taux = new double [] {45., 10., 45.};
+			taux = LEVEL[2];
 		}
 	}
 
@@ -102,4 +108,22 @@ public class Evaluation {
 		}
 		return (count);
 	}
+}
+
+class Ponderation {
+	public static double[][] FACILE = {
+		{45., 45., 10.},
+		{70., 20., 10.},
+		{75., 15., 10.}
+	};
+	public static double[][] MOYEN = {
+		{50., 20., 30.},
+		{40., 30., 30.},
+		{20., 40., 40.}
+	};
+	public static double[][] DIFFICILE = {
+		{10., 45., 45.},
+		{20., 30., 50.},
+		{45., 10., 45.}
+	};
 }

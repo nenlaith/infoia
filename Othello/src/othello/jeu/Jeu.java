@@ -23,7 +23,7 @@ public class Jeu {
 	   this.niveau = niveau;
 	   tour = Couleur.NOIR;
 	   nonTour = (tour == Couleur.BLANC) ? Couleur.NOIR : Couleur.BLANC;
-	   iA = new IA();
+	   iA = new IA(niveau);
 	}
 
 	public void setPlateau(Plateau plateau) {
@@ -74,7 +74,7 @@ public class Jeu {
 	}
 
 	public boolean jeuIA() {
-		State pion = iA.tour(plateau.getSampleCases(), nombreTour, niveau, debug); // A CHANGER
+		State pion = iA.tour(plateau.getSampleCases(), nombreTour, debug); // A CHANGER
 		if (pion != null) {
 			System.out.println(pion.getSeconds().size());
 			plateau.getCase(pion.getPrimary().y, pion.getPrimary().x).setCouleur(Couleur.BLANC);
