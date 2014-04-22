@@ -82,9 +82,8 @@ public class IA {
 			this.tour--;
 			fils.get(i).retrieve();
 			if (val >= beta)
-				return beta;
-			if (val > alpha)
-				alpha = val;
+				return val;
+			alpha = (val >= alpha) ? val : alpha;
 		}
 		return alpha;
 	}
@@ -112,9 +111,8 @@ public class IA {
 			this.tour--;
 			fils.get(i).retrieve();
 			if (val <= alpha)
-				return alpha;
-			if (val < beta)
-				beta = val;
+				return val;
+			beta = (val <= beta) ? val : beta;
 		}
 		return beta;
 	}
